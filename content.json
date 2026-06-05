@@ -1,0 +1,62 @@
+{
+  "site": {
+    "title": "VOID HOLLOW",
+    "title_ja": "虚ろの廊下",
+    "subtitle": "深淵より、物語は始まる",
+    "copyright": "© 2026 VOID HOLLOW All rights reserved."
+  },
+  "hero": {
+    "catchcopy": "見てはいけない。でも、目が離せない。",
+    "sub_catchcopy": "闇の向こうに、あなたへの物語が待っている。",
+    "button_text": "深淵へ踏み込む",
+    "button_link": "#about"
+  },
+  "about": {
+    "body": "私たちは闇と美の境界を探求する創作集団です。\n小説、イラスト、音楽を通じて、あなたを未知の世界へ誘います。\n\n普通では届かない感情の深淵に、そっと指先を伸ばしてみてください。\nここに辿り着いたあなたには、何かが見えるはずです。"
+  },
+  "news": [
+    {
+      "date": "2026.06.05",
+      "category": "お知らせ",
+      "title": "公式サイトをオープンしました",
+      "link": "#"
+    },
+    {
+      "date": "2026.05.20",
+      "category": "活動報告",
+      "title": "第一弾作品「深淵の子守唄」公開",
+      "link": "#"
+    },
+    {
+      "date": "2026.04.10",
+      "category": "イベント",
+      "title": "コミケ参加決定のお知らせ",
+      "link": "#"
+    }
+  ],
+  "works": [
+    {
+      "title": "深淵の子守唄",
+      "category": "小説",
+      "image": "https://placehold.co/600x400/0f0b14/8a8070?text=WORK+01",
+      "description": "眠れない夜に読む、少し怖い物語。"
+    },
+    {
+      "title": "虚ろの庭",
+      "category": "イラスト",
+      "image": "https://placehold.co/600x400/1a1225/6b5e80?text=WORK+02",
+      "description": "誰も訪れない庭の、静かな夜明け。"
+    },
+    {
+      "title": "鏡の向こう側",
+      "category": "短編ゲーム",
+      "image": "https://placehold.co/600x400/14080a/80606a?text=WORK+03",
+      "description": "あなたの鏡には、何が映っていますか。"
+    }
+  ],
+  "contact": {
+    "body": "作品への感想、制作依頼、参加希望はXのDMよりお気軽にどうぞ。\n闇を愛するすべての方の参加を歓迎します。",
+    "button_text": "X (Twitter) で連絡する",
+    "button_link": "https://twitter.com/"
+  }
+}

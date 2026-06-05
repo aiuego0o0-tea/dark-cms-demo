@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — CMS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0b10;
+      --bg-2: #161220;
+      --bg-card: #1e1830;
+      --bg-input: #12101a;
+      --crimson: #7a1515;
+      --crimson-l: #a02020;
+      --gold: #8a6820;
+      --gold-l: #b89050;
+      --text: #ccc0b0;
+      --text-2: #8a8070;
+      --text-3: #504840;
+      --border: rgba(200,192,176,0.1);
+      --green: #2a7a40;
+      --green-l: #3a9e54;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Noto Sans JP', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+    }
+
+    /* ===== LOGIN SCREEN ===== */
+    #login-screen {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+    #login-screen h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      letter-spacing: 0.4em;
+      color: var(--gold-l);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    #login-screen p {
+      font-size: 0.78rem;
+      color: var(--text-2);
+      letter-spacing: 0.15em;
+      margin-bottom: 2.5rem;
+    }
+    .login-box {
+      width: 100%;
+      max-width: 380px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 2.5rem;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1.2rem;
+    }
+    label {
+      font-size: 0.72rem;
+      color: var(--text-2);
+      letter-spacing: 0.1em;
+    }
+    input[type="password"],
+    input[type="text"],
+    input[type="url"],
+    textarea,
+    select {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 0.88rem;
+      padding: 0.7rem 0.9rem;
+      outline: none;
+      transition: border-color 0.25s;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--gold);
+    }
+    textarea { resize: vertical; min-height: 100px; line-height: 1.7; }
+
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.8rem;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 400;
+      cursor: pointer;
+      border: none;
+      transition: background 0.25s;
+      letter-spacing: 0.08em;
+    }
+    .btn-primary { background: var(--crimson); color: var(--text); }
+    .btn-primary:hover { background: var(--crimson-l); }
+    .btn-success { background: var(--green); color: #fff; }
+    .btn-success:hover { background: var(--green-l); }
+    .btn-gold { background: var(--gold); color: #fff; }
+    .btn-gold:hover { background: var(--gold-l); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-2);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { border-color: var(--text-2); color: var(--text); }
+    .btn-danger {
+      background: transparent;
+      color: #7a2020;
+      border: 1px solid #3a1010;
+      font-size: 0.72rem;
+      padding: 0.4rem 0.8rem;
+    }
+    .btn-danger:hover { background: #3a1010; }
+    .btn-full { width: 100%; text-align: center; display: block; }
+
+    #login-error {
+      color: #9e2020;
+      font-size: 0.78rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    /* ===== FIRST SETUP SCREEN ===== */
+    #setup-screen {
+      display: none;
+      min-height: 100vh;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+    #setup-screen .login-box { max-width: 440px; }
+    #setup-screen h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      letter-spacing: 0.3em;
+      color: var(--gold-l);
+      margin-bottom: 0.4rem;
+    }
+    #setup-screen > div > p {
+      font-size: 0.78rem;
+      color: var(--text-2);
+      margin-bottom: 2rem;
+    }
+
+    /* ===== ADMIN SHELL ===== */
+    #admin-shell { display: none; }
+
+    .admin-header {
+      background: var(--bg-2);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .admin-header-left {
+      font-family: 'Cinzel', serif;
+      font-size: 0.82rem;
+      color: var(--gold-l);
+      letter-spacing: 0.3em;
+    }
+    .admin-header-right { display: flex; gap: 0.8rem; align-items: center; }
+
+    /* Tabs */
+    .tab-bar {
+      background: var(--bg-2);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      gap: 0;
+    }
+    .tab-btn {
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--text-2);
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 0.78rem;
+      padding: 0.9rem 1.4rem;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+      letter-spacing: 0.05em;
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--gold-l); border-bottom-color: var(--gold); }
+
+    /* Content area */
+    .admin-body {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem;
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* Cards */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 1.8rem 2rem;
+      margin-bottom: 1.5rem;
+    }
+    .card-title {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--gold-l);
+      letter-spacing: 0.15em;
+      margin-bottom: 1.4rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .form-group { margin-bottom: 1rem; }
+    .form-hint {
+      font-size: 0.68rem;
+      color: var(--text-3);
+      margin-top: 0.35rem;
+    }
+
+    /* Array items (news, works) */
+    .array-item {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      padding: 1.2rem 1.4rem;
+      margin-bottom: 0.8rem;
+      position: relative;
+    }
+    .array-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .array-item-num {
+      font-size: 0.7rem;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+    }
+
+    .add-btn {
+      background: transparent;
+      border: 1px dashed var(--border);
+      color: var(--text-2);
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Noto Sans JP', sans-serif;
+    }
+    .add-btn:hover { border-color: var(--gold); color: var(--gold-l); }
+
+    /* Toast notification */
+    #toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 0.9rem 2rem;
+      font-size: 0.82rem;
+      letter-spacing: 0.05em;
+      transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+      z-index: 9999;
+      white-space: nowrap;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+    #toast.success { border-color: var(--green); color: #5aba74; }
+    #toast.error   { border-color: var(--crimson); color: #c05050; }
+    #toast.loading { border-color: var(--gold); color: var(--gold-l); }
+
+    /* Save bar */
+    .save-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--bg-2);
+      border-top: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 200;
+    }
+    .save-bar p { font-size: 0.78rem; color: var(--text-2); }
+    .save-bar .btn { min-width: 160px; text-align: center; }
+
+    .admin-body { padding-bottom: 5rem; }
+
+    /* Status indicator */
+    .github-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.7rem;
+    }
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--text-3);
+    }
+    .status-dot.ok { background: var(--green-l); }
+    .status-dot.error { background: var(--crimson-l); }
+
+    @media (max-width: 600px) {
+      .form-row { grid-template-columns: 1fr; }
+      .admin-header { padding: 0.8rem 1rem; }
+      .tab-btn { padding: 0.7rem 0.8rem; font-size: 0.72rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== FIRST-TIME SETUP ===== -->
+  <div id="setup-screen">
+    <div>
+      <div class="login-box">
+        <h2>INITIAL SETUP</h2>
+        <p>管理パスワードを設定してください。</p>
+        <div class="form-group">
+          <label>管理パスワード</label>
+          <input type="password" id="setup-pass1" placeholder="新しいパスワード">
+        </div>
+        <div class="form-group">
+          <label>確認（もう一度）</label>
+          <input type="password" id="setup-pass2" placeholder="同じパスワードをもう一度">
+        </div>
+        <p id="setup-error" style="color:#9e2020;font-size:0.78rem;margin-bottom:0.8rem;display:none;"></p>
+        <button class="btn btn-primary btn-full" onclick="setupPassword()">設定して開始</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== LOGIN ===== -->
+  <div id="login-screen">
+    <h1>ADMIN PANEL</h1>
+    <p>管理者専用エリア</p>
+    <div class="login-box">
+      <p id="login-error">パスワードが違います。</p>
+      <div class="form-group">
+        <label>パスワード</label>
+        <input type="password" id="login-pass" placeholder="••••••••"
+          onkeydown="if(event.key==='Enter')login()">
+      </div>
+      <button class="btn btn-primary btn-full" onclick="login()">ログイン</button>
+      <p style="font-size:0.68rem;color:var(--text-3);margin-top:1.2rem;text-align:center;">
+        ※ パスワードを忘れた場合はlocalStorageの「admin_hash」を削除してください
+      </p>
+    </div>
+  </div>
+
+  <!-- ===== ADMIN SHELL ===== -->
+  <div id="admin-shell">
+    <header class="admin-header">
+      <div class="admin-header-left">✦ CMS ADMIN</div>
+      <div class="admin-header-right">
+        <span class="github-status">
+          <span class="status-dot" id="github-dot"></span>
+          <span id="github-status-text">GitHub未接続</span>
+        </span>
+        <button class="btn btn-ghost" style="font-size:0.72rem;padding:0.4rem 0.9rem"
+          onclick="logout()">ログアウト</button>
+      </div>
+    </header>
+
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('content')">コンテンツ</button>
+      <button class="tab-btn" onclick="switchTab('settings')">GitHub設定</button>
+      <button class="tab-btn" onclick="switchTab('password')">パスワード変更</button>
+    </div>
+
+    <div class="admin-body">
+
+      <!-- ===== CONTENT TAB ===== -->
+      <div id="tab-content" class="tab-panel active">
+
+        <!-- Site -->
+        <div class="card">
+          <p class="card-title">🖤 サイト基本情報</p>
+          <div class="form-row">
+            <div class="form-group">
+              <label>サイトタイトル（英語）</label>
+              <input type="text" id="site-title" placeholder="VOID HOLLOW">
+            </div>
+            <div class="form-group">
+              <label>サイトタイトル（日本語）</label>
+              <input type="text" id="site-title-ja" placeholder="虚ろの廊下">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>サブタイトル</label>
+            <input type="text" id="site-subtitle" placeholder="深淵より、物語は始まる">
+          </div>
+          <div class="form-group">
+            <label>コピーライト</label>
+            <input type="text" id="site-copyright">
+          </div>
+        </div>
+
+        <!-- Hero -->
+        <div class="card">
+          <p class="card-title">🌑 ヒーロー（トップ）</p>
+          <div class="form-group">
+            <label>キャッチコピー（大）</label>
+            <input type="text" id="hero-catchcopy">
+          </div>
+          <div class="form-group">
+            <label>サブキャッチコピー（小）</label>
+            <input type="text" id="hero-sub">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>ボタンテキスト</label>
+              <input type="text" id="hero-btn-text">
+            </div>
+            <div class="form-group">
+              <label>ボタンリンク先</label>
+              <input type="text" id="hero-btn-link" placeholder="#about">
+            </div>
+          </div>
+        </div>
+
+        <!-- About -->
+        <div class="card">
+          <p class="card-title">📖 About（概要文）</p>
+          <div class="form-group">
+            <label>本文（改行で段落分け）</label>
+            <textarea id="about-body" rows="6"></textarea>
+            <p class="form-hint">改行すると段落が分かれます</p>
+          </div>
+        </div>
+
+        <!-- News -->
+        <div class="card">
+          <p class="card-title">📰 お知らせ</p>
+          <div id="news-items"></div>
+          <button class="add-btn" onclick="addNewsItem()">＋ お知らせを追加</button>
+        </div>
+
+        <!-- Works -->
+        <div class="card">
+          <p class="card-title">🎨 Works（作品）</p>
+          <div id="works-items"></div>
+          <button class="add-btn" onclick="addWorkItem()">＋ 作品を追加</button>
+        </div>
+
+        <!-- Contact -->
+        <div class="card">
+          <p class="card-title">✉️ Contact</p>
+          <div class="form-group">
+            <label>説明文</label>
+            <textarea id="contact-body" rows="3"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>ボタンテキスト</label>
+              <input type="text" id="contact-btn-text">
+            </div>
+            <div class="form-group">
+              <label>ボタンリンク（TwitterのURL等）</label>
+              <input type="url" id="contact-btn-link">
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /tab-content -->
+
+      <!-- ===== SETTINGS TAB ===== -->
+      <div id="tab-settings" class="tab-panel">
+        <div class="card">
+          <p class="card-title">⚙️ GitHub接続設定</p>
+          <p style="font-size:0.78rem;color:var(--text-2);margin-bottom:1.5rem;line-height:1.8;">
+            保存した内容はGitHubリポジトリの<code style="background:var(--bg-input);padding:0.1rem 0.4rem">content.json</code>に書き込まれます。<br>
+            GitHub Pagesが自動でサイトを更新します（反映まで約1分）。
+          </p>
+          <div class="form-group">
+            <label>GitHubユーザー名 / オーナー</label>
+            <input type="text" id="gh-owner" placeholder="例: aiuego0o0-tea">
+          </div>
+          <div class="form-group">
+            <label>リポジトリ名</label>
+            <input type="text" id="gh-repo" placeholder="例: my-project-site">
+          </div>
+          <div class="form-group">
+            <label>content.json のパス</label>
+            <input type="text" id="gh-path" placeholder="例: content.json または subfolder/content.json">
+            <p class="form-hint">リポジトリルートに置く場合は「content.json」のみ</p>
+          </div>
+          <div class="form-group">
+            <label>GitHub Personal Access Token (PAT)</label>
+            <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxx">
+            <p class="form-hint">
+              Settings → Developer settings → Personal access tokens → Fine-grained token<br>
+              権限: Repository → Contents → Read and write
+            </p>
+          </div>
+          <div style="display:flex;gap:0.8rem;margin-top:0.5rem;">
+            <button class="btn btn-gold" onclick="saveGitHubSettings()">設定を保存</button>
+            <button class="btn btn-ghost" onclick="testGitHubConnection()">接続テスト</button>
+          </div>
+        </div>
+      </div><!-- /tab-settings -->
+
+      <!-- ===== PASSWORD TAB ===== -->
+      <div id="tab-password" class="tab-panel">
+        <div class="card" style="max-width:400px;">
+          <p class="card-title">🔑 管理パスワード変更</p>
+          <div class="form-group">
+            <label>現在のパスワード</label>
+            <input type="password" id="pw-current">
+          </div>
+          <div class="form-group">
+            <label>新しいパスワード</label>
+            <input type="password" id="pw-new">
+          </div>
+          <div class="form-group">
+            <label>新しいパスワード（確認）</label>
+            <input type="password" id="pw-confirm">
+          </div>
+          <p id="pw-error" style="color:#9e2020;font-size:0.78rem;margin-bottom:0.8rem;display:none;"></p>
+          <button class="btn btn-primary" onclick="changePassword()">パスワードを変更</button>
+        </div>
+      </div><!-- /tab-password -->
+
+    </div><!-- /admin-body -->
+
+    <!-- SAVE BAR -->
+    <div class="save-bar">
+      <p id="save-status">変更後「GitHubに保存」で公開されます</p>
+      <button class="btn btn-success" onclick="saveToGitHub()">💾 GitHubに保存</button>
+    </div>
+
+  </div><!-- /admin-shell -->
+
+  <div id="toast"></div>
+
+  <script>
+    // ===== UTILITY =====
+    async function sha256(str) {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    function toast(msg, type = 'loading', duration = 3000) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = `show ${type}`;
+      if (duration > 0) setTimeout(() => t.className = '', duration);
+    }
+
+    function switchTab(name) {
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + name).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    // ===== AUTH =====
+    async function setupPassword() {
+      const p1 = document.getElementById('setup-pass1').value;
+      const p2 = document.getElementById('setup-pass2').value;
+      const err = document.getElementById('setup-error');
+      if (!p1 || p1.length < 4) { err.textContent = '4文字以上で設定してください'; err.style.display='block'; return; }
+      if (p1 !== p2) { err.textContent = 'パスワードが一致しません'; err.style.display='block'; return; }
+      const hash = await sha256(p1);
+      localStorage.setItem('admin_hash', hash);
+      document.getElementById('setup-screen').style.display = 'none';
+      showAdmin();
+    }
+
+    async function login() {
+      const pass = document.getElementById('login-pass').value;
+      const storedHash = localStorage.getItem('admin_hash');
+      const inputHash = await sha256(pass);
+      if (inputHash === storedHash) {
+        localStorage.setItem('admin_session', Date.now().toString());
+        document.getElementById('login-screen').style.display = 'none';
+        showAdmin();
+      } else {
+        document.getElementById('login-error').style.display = 'block';
+        document.getElementById('login-pass').value = '';
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('admin_session');
+      location.reload();
+    }
+
+    async function changePassword() {
+      const cur  = document.getElementById('pw-current').value;
+      const nw   = document.getElementById('pw-new').value;
+      const conf = document.getElementById('pw-confirm').value;
+      const err  = document.getElementById('pw-error');
+      const storedHash = localStorage.getItem('admin_hash');
+      const curHash = await sha256(cur);
+      if (curHash !== storedHash) { err.textContent = '現在のパスワードが違います'; err.style.display='block'; return; }
+      if (!nw || nw.length < 4)  { err.textContent = '4文字以上で設定してください'; err.style.display='block'; return; }
+      if (nw !== conf)            { err.textContent = '新しいパスワードが一致しません'; err.style.display='block'; return; }
+      const newHash = await sha256(nw);
+      localStorage.setItem('admin_hash', newHash);
+      err.style.display = 'none';
+      toast('パスワードを変更しました', 'success');
+      ['pw-current','pw-new','pw-confirm'].forEach(id => document.getElementById(id).value = '');
+    }
+
+    // ===== INIT =====
+    function init() {
+      const hash    = localStorage.getItem('admin_hash');
+      const session = localStorage.getItem('admin_session');
+      const now     = Date.now();
+
+      // First time
+      if (!hash) {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('setup-screen').style.display = 'flex';
+        return;
+      }
+      // Session valid (24h)
+      if (session && now - parseInt(session) < 86400000) {
+        document.getElementById('login-screen').style.display = 'none';
+        showAdmin();
+        return;
+      }
+      // Show login
+    }
+
+    function showAdmin() {
+      document.getElementById('admin-shell').style.display = 'block';
+      loadGitHubSettings();
+      loadContent();
+    }
+
+    // ===== GITHUB SETTINGS =====
+    function saveGitHubSettings() {
+      const settings = {
+        owner:   document.getElementById('gh-owner').value.trim(),
+        repo:    document.getElementById('gh-repo').value.trim(),
+        path:    document.getElementById('gh-path').value.trim() || 'content.json',
+        token:   document.getElementById('gh-token').value.trim()
+      };
+      localStorage.setItem('cms_settings', JSON.stringify(settings));
+      toast('GitHub設定を保存しました', 'success');
+    }
+
+    function loadGitHubSettings() {
+      const s = JSON.parse(localStorage.getItem('cms_settings') || '{}');
+      if (s.owner) document.getElementById('gh-owner').value = s.owner;
+      if (s.repo)  document.getElementById('gh-repo').value  = s.repo;
+      if (s.path)  document.getElementById('gh-path').value  = s.path;
+      if (s.token) document.getElementById('gh-token').value = s.token;
+      updateGitHubStatus(!!s.token && !!s.owner && !!s.repo);
+    }
+
+    function updateGitHubStatus(ok) {
+      const dot  = document.getElementById('github-dot');
+      const text = document.getElementById('github-status-text');
+      if (ok) { dot.className = 'status-dot ok'; text.textContent = 'GitHub接続済み'; }
+      else    { dot.className = 'status-dot';    text.textContent = 'GitHub未設定'; }
+    }
+
+    async function testGitHubConnection() {
+      toast('接続テスト中...', 'loading', 0);
+      const s = JSON.parse(localStorage.getItem('cms_settings') || '{}');
+      if (!s.owner || !s.repo || !s.token) {
+        toast('まず設定を入力・保存してください', 'error'); return;
+      }
+      try {
+        const res = await fetch(`https://api.github.com/repos/${s.owner}/${s.repo}`, {
+          headers: { 'Authorization': `token ${s.token}` }
+        });
+        if (res.ok) {
+          updateGitHubStatus(true);
+          toast('接続成功！リポジトリを確認できました', 'success');
+        } else {
+          toast('接続失敗：TokenまたはRepository名を確認してください', 'error');
+        }
+      } catch {
+        toast('ネットワークエラー', 'error');
+      }
+    }
+
+    // ===== CONTENT MANAGEMENT =====
+    let contentData = {};
+
+    async function loadContent() {
+      const s = JSON.parse(localStorage.getItem('cms_settings') || '{}');
+      let data = null;
+
+      // Try GitHub API first
+      if (s.owner && s.repo && s.token) {
+        try {
+          const res = await fetch(
+            `https://api.github.com/repos/${s.owner}/${s.repo}/contents/${s.path || 'content.json'}`,
+            { headers: { 'Authorization': `token ${s.token}` } }
+          );
+          if (res.ok) {
+            const fileData = await res.json();
+            const decoded = decodeURIComponent(escape(atob(fileData.content.replace(/\n/g, ''))));
+            data = JSON.parse(decoded);
+            updateGitHubStatus(true);
+          }
+        } catch {}
+      }
+
+      // Fallback: fetch relative content.json
+      if (!data) {
+        try {
+          const res = await fetch('../content.json');
+          if (res.ok) data = await res.json();
+        } catch {}
+      }
+
+      if (data) {
+        contentData = data;
+        populateForm(data);
+      }
+    }
+
+    function populateForm(d) {
+      // Site
+      setValue('site-title',    d.site?.title);
+      setValue('site-title-ja', d.site?.title_ja);
+      setValue('site-subtitle', d.site?.subtitle);
+      setValue('site-copyright',d.site?.copyright);
+
+      // Hero
+      setValue('hero-catchcopy', d.hero?.catchcopy);
+      setValue('hero-sub',       d.hero?.sub_catchcopy);
+      setValue('hero-btn-text',  d.hero?.button_text);
+      setValue('hero-btn-link',  d.hero?.button_link);
+
+      // About
+      setValue('about-body', d.about?.body);
+
+      // News
+      const newsContainer = document.getElementById('news-items');
+      newsContainer.innerHTML = '';
+      (d.news || []).forEach((n, i) => {
+        newsContainer.appendChild(createNewsItem(n, i));
+      });
+
+      // Works
+      const worksContainer = document.getElementById('works-items');
+      worksContainer.innerHTML = '';
+      (d.works || []).forEach((w, i) => {
+        worksContainer.appendChild(createWorkItem(w, i));
+      });
+
+      // Contact
+      setValue('contact-body',     d.contact?.body);
+      setValue('contact-btn-text', d.contact?.button_text);
+      setValue('contact-btn-link', d.contact?.button_link);
+    }
+
+    function setValue(id, val) {
+      const el = document.getElementById(id);
+      if (el && val !== undefined && val !== null) el.value = val;
+    }
+
+    function createNewsItem(n, i) {
+      const div = document.createElement('div');
+      div.className = 'array-item';
+      div.dataset.index = i;
+      div.innerHTML = `
+        <div class="array-item-header">
+          <span class="array-item-num">NEWS ${String(i+1).padStart(2,'0')}</span>
+          <button class="btn btn-danger" onclick="removeItem('news-items', this)">削除</button>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>日付</label>
+            <input type="text" class="news-date" value="${n.date || ''}" placeholder="2026.06.05">
+          </div>
+          <div class="form-group">
+            <label>カテゴリ</label>
+            <input type="text" class="news-cat" value="${n.category || ''}" placeholder="お知らせ">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>タイトル</label>
+            <input type="text" class="news-title-input" value="${n.title || ''}">
+          </div>
+          <div class="form-group">
+            <label>リンク先URL</label>
+            <input type="text" class="news-link" value="${n.link || ''}" placeholder="#">
+          </div>
+        </div>`;
+      return div;
+    }
+
+    function createWorkItem(w, i) {
+      const div = document.createElement('div');
+      div.className = 'array-item';
+      div.dataset.index = i;
+      div.innerHTML = `
+        <div class="array-item-header">
+          <span class="array-item-num">WORK ${String(i+1).padStart(2,'0')}</span>
+          <button class="btn btn-danger" onclick="removeItem('works-items', this)">削除</button>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>作品タイトル</label>
+            <input type="text" class="work-title-input" value="${w.title || ''}">
+          </div>
+          <div class="form-group">
+            <label>カテゴリ（イラスト/小説 等）</label>
+            <input type="text" class="work-cat-input" value="${w.category || ''}">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>画像URL</label>
+          <input type="url" class="work-image" value="${w.image || ''}" placeholder="https://...">
+          <p class="form-hint">PNG/JPGのURLを入力（Googleドライブ不可。GitHub等に上げてURL取得推奨）</p>
+        </div>
+        <div class="form-group">
+          <label>説明文</label>
+          <input type="text" class="work-desc-input" value="${w.description || ''}">
+        </div>`;
+      return div;
+    }
+
+    function addNewsItem() {
+      const container = document.getElementById('news-items');
+      const i = container.children.length;
+      container.appendChild(createNewsItem({date:'',category:'',title:'',link:'#'}, i));
+    }
+
+    function addWorkItem() {
+      const container = document.getElementById('works-items');
+      const i = container.children.length;
+      container.appendChild(createWorkItem({title:'',category:'',image:'',description:''}, i));
+    }
+
+    function removeItem(containerId, btn) {
+      btn.closest('.array-item').remove();
+      // Re-number
+      document.querySelectorAll(`#${containerId} .array-item-num`).forEach((el, i) => {
+        const prefix = containerId === 'news-items' ? 'NEWS' : 'WORK';
+        el.textContent = `${prefix} ${String(i+1).padStart(2,'0')}`;
+      });
+    }
+
+    // ===== COLLECT FORM DATA =====
+    function collectFormData() {
+      // News
+      const news = Array.from(document.querySelectorAll('#news-items .array-item')).map(el => ({
+        date:     el.querySelector('.news-date').value,
+        category: el.querySelector('.news-cat').value,
+        title:    el.querySelector('.news-title-input').value,
+        link:     el.querySelector('.news-link').value || '#'
+      }));
+
+      // Works
+      const works = Array.from(document.querySelectorAll('#works-items .array-item')).map(el => ({
+        title:       el.querySelector('.work-title-input').value,
+        category:    el.querySelector('.work-cat-input').value,
+        image:       el.querySelector('.work-image').value,
+        description: el.querySelector('.work-desc-input').value
+      }));
+
+      return {
+        site: {
+          title:     document.getElementById('site-title').value,
+          title_ja:  document.getElementById('site-title-ja').value,
+          subtitle:  document.getElementById('site-subtitle').value,
+          copyright: document.getElementById('site-copyright').value
+        },
+        hero: {
+          catchcopy:     document.getElementById('hero-catchcopy').value,
+          sub_catchcopy: document.getElementById('hero-sub').value,
+          button_text:   document.getElementById('hero-btn-text').value,
+          button_link:   document.getElementById('hero-btn-link').value
+        },
+        about: {
+          body: document.getElementById('about-body').value
+        },
+        news,
+        works,
+        contact: {
+          body:        document.getElementById('contact-body').value,
+          button_text: document.getElementById('contact-btn-text').value,
+          button_link: document.getElementById('contact-btn-link').value
+        }
+      };
+    }
+
+    // ===== SAVE TO GITHUB =====
+    async function saveToGitHub() {
+      const s = JSON.parse(localStorage.getItem('cms_settings') || '{}');
+      if (!s.owner || !s.repo || !s.token) {
+        toast('GitHub設定が未完了です。「GitHub設定」タブで設定してください', 'error');
+        return;
+      }
+
+      toast('GitHubに保存中...', 'loading', 0);
+      const newContent = collectFormData();
+      const path = s.path || 'content.json';
+      const apiUrl = `https://api.github.com/repos/${s.owner}/${s.repo}/contents/${path}`;
+
+      try {
+        // Get current file SHA
+        const getRes = await fetch(apiUrl, {
+          headers: { 'Authorization': `token ${s.token}` }
+        });
+        if (!getRes.ok) {
+          toast('GitHub接続エラー。Token・Repoを確認してください', 'error');
+          return;
+        }
+        const fileData = await getRes.json();
+        const sha = fileData.sha;
+
+        // Encode content
+        const contentStr = JSON.stringify(newContent, null, 2);
+        const contentB64 = btoa(unescape(encodeURIComponent(contentStr)));
+
+        // Push update
+        const putRes = await fetch(apiUrl, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `token ${s.token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: `CMS update: ${new Date().toLocaleString('ja-JP')}`,
+            content: contentB64,
+            sha: sha
+          })
+        });
+
+        if (putRes.ok) {
+          toast('✓ 保存しました。サイトへの反映まで約1分お待ちください', 'success', 5000);
+          document.getElementById('save-status').textContent =
+            `最終保存: ${new Date().toLocaleString('ja-JP')}`;
+          contentData = newContent;
+        } else {
+          const errData = await putRes.json();
+          toast(`保存失敗: ${errData.message || '不明なエラー'}`, 'error');
+        }
+      } catch (e) {
+        toast(`エラー: ${e.message}`, 'error');
+      }
+    }
+
+    // ===== START =====
+    init();
+  </script>
+</body>
+</html>

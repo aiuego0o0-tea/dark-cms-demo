@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ヒアリングシート｜クリエイター・創作活動向け｜aiuego</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #faf8f5;
+      --card: #ffffff;
+      --border: #e0dbd4;
+      --text: #2d2820;
+      --text-2: #7a7068;
+      --accent: #8bb8c8;
+      --accent-d: #5a9ab0;
+      --accent-light: #e8f4f8;
+      --red: #c05050;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Noto Sans JP', sans-serif;
+      font-weight: 300;
+      line-height: 1.8;
+      padding: 0 1rem 4rem;
+    }
+    .header {
+      background: var(--accent);
+      color: #fff;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .header h1 { font-size: 1.3rem; font-weight: 500; letter-spacing: 0.05em; }
+    .header p  { font-size: 0.85rem; margin-top: 0.5rem; opacity: 0.9; }
+
+    .container { max-width: 680px; margin: 0 auto; }
+
+    .intro-note {
+      background: var(--accent-light);
+      border-left: 3px solid var(--accent);
+      padding: 1rem 1.4rem;
+      font-size: 0.84rem;
+      color: var(--text-2);
+      line-height: 1.9;
+      margin-bottom: 2rem;
+    }
+
+    .section-block {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 1.8rem 2rem;
+      margin-bottom: 1.5rem;
+    }
+    .section-title {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--accent-d);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.7rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .q-block { margin-bottom: 1.4rem; }
+    .q-label {
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+    .q-label .req {
+      color: var(--red);
+      font-size: 0.7rem;
+      margin-left: 0.3rem;
+    }
+    .q-hint {
+      font-size: 0.74rem;
+      color: var(--text-2);
+      margin-bottom: 0.5rem;
+      line-height: 1.7;
+    }
+
+    input[type="text"],
+    input[type="url"],
+    input[type="email"],
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 0.65rem 0.9rem;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 300;
+      color: var(--text);
+      background: var(--bg);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+      background: #fff;
+    }
+    textarea { resize: vertical; min-height: 80px; line-height: 1.7; }
+
+    /* Checkbox / Radio styles */
+    .check-group, .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .check-item, .radio-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      cursor: pointer;
+      font-size: 0.88rem;
+    }
+    .check-item input[type="checkbox"],
+    .radio-item input[type="radio"] {
+      width: auto;
+      margin-top: 0.25rem;
+      flex-shrink: 0;
+      accent-color: var(--accent-d);
+    }
+    .other-input {
+      margin-top: 0.4rem;
+      margin-left: 1.5rem;
+    }
+
+    /* Atmosphere scale */
+    .scale-group {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+    .scale-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.72rem;
+      color: var(--text-2);
+    }
+    .scale-item input[type="radio"] {
+      width: auto;
+      accent-color: var(--accent-d);
+    }
+
+    /* Grid for 2-column */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 500px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    .submit-area {
+      text-align: center;
+      margin-top: 2rem;
+    }
+    .submit-btn {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 0.9rem 3rem;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 400;
+      cursor: pointer;
+      letter-spacing: 0.08em;
+      transition: background 0.25s;
+    }
+    .submit-btn:hover { background: var(--accent-d); }
+
+    .note-bottom {
+      font-size: 0.74rem;
+      color: var(--text-2);
+      text-align: center;
+      margin-top: 1.5rem;
+      line-height: 1.9;
+    }
+
+    /* Tag-style checkboxes for visual mood */
+    .mood-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .mood-item input[type="checkbox"] { display: none; }
+    .mood-item label {
+      display: inline-block;
+      padding: 0.35rem 0.9rem;
+      border: 1px solid var(--border);
+      font-size: 0.8rem;
+      color: var(--text-2);
+      cursor: pointer;
+      transition: all 0.2s;
+      border-radius: 2px;
+    }
+    .mood-item input:checked + label {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .hr { border: none; border-top: 1px solid var(--border); margin: 0.5rem 0 1rem; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>ヒアリングシート｜クリエイター・創作活動向け</h1>
+    <p>aiuego HP制作サービス ／ ご記入いただいた内容をもとにご提案いたします</p>
+  </div>
+
+  <div class="container">
+
+    <div class="intro-note">
+      このシートはイラストレーター・創作サークル・VTuber・作家・ゲーム制作者など<strong>クリエイター・創作活動をされている方向け</strong>のヒアリングシートです。<br>
+      すべて必須ではありません。わかる範囲でご記入ください。迷ったら空白でもOKです🌿
+    </div>
+
+    <!-- ===== 01 基本情報 ===== -->
+    <div class="section-block">
+      <p class="section-title">01 — 基本情報</p>
+
+      <div class="q-block">
+        <label class="q-label">活動名・サークル名・ペンネーム<span class="req">必須</span></label>
+        <input type="text" placeholder="例：ハーハーブ / VOID HOLLOW">
+      </div>
+
+      <div class="q-block">
+        <label class="q-label">X（Twitter）のアカウントURL</label>
+        <input type="url" placeholder="https://twitter.com/@your_account">
+      </div>
+
+      <div class="q-block">
+        <label class="q-label">メールアドレス（ご連絡用）<span class="req">必須</span></label>
+        <input type="email" placeholder="example@email.com">
+      </div>
+
+      <div class="q-block">
+        <label class="q-label">活動ジャンル（複数選択OK）</label>
+        <div class="check-group">
+          <label class="check-item"><input type="checkbox"> <span>イラスト・漫画</span></label>
+          <label class="check-item"><input type="checkbox"> <span>小説・テキスト創作</span></label>
+          <label class="check-item"><input type="checkbox"> <span>Live2D・3Dモデリング</span></label>
+          <label class="check-item"><input type="checkbox"> <span>音楽・サウンド制作</span></label>
+          <label class="check-item"><input type="checkbox"> <span>ゲーム・ノベル制作</span></label>
+          <label class="check-item"><input type="checkbox"> <span>VTuber・配信活動</span></label>
+          <label class="check-item"><input type="checkbox"> <span>創作サークル（複数人）</span></label>
+          <label class="check-item"><input type="checkbox"> <span>その他：<input type="text" class="other-input" placeholder="例：コスプレ、同人ハンドメイド"></span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <label class="q-label">活動歴・規模感</label>
+        <select>
+          <option value="">選択してください</option>
+          <option>始めたばかり（1年未満）</option>
+          <option>1〜3年</option>
+          <option>3〜5年</option>
+          <option>5年以上</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- ===== 02 HP目的 ===== -->
+    <div class="section-block">
+      <p class="section-title">02 — HPを作る目的・使い方</p>
+
+      <div class="q-block">
+        <label class="q-label">HPで一番やりたいこと（優先順1つ）</label>
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="main-goal"> <span>作品・ポートフォリオを一覧で見せたい</span></label>
+          <label class="radio-item"><input type="radio" name="main-goal"> <span>依頼・受注の問い合わせを受けたい</span></label>
+          <label class="radio-item"><input type="radio" name="main-goal"> <span>プロジェクト・サークルの活動拠点にしたい</span></label>
+          <label class="radio-item"><input type="radio" name="main-goal"> <span>ファン向けに情報を発信したい</span></label>
+          <label class="radio-item"><input type="radio" name="main-goal"> <span>自分（たち）のブランド・世界観を表現したい</span></label>
+          <label class="radio-item"><input type="radio" name="main-goal"> <span>その他：<input type="text" class="other-input" placeholder="ご自由に"></span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <label class="q-label">誰に見てほしいですか？（複数選択OK）</label>
+        <div class="check-group">
+          <label class="check-item"><input type="checkbox"> <span>ファン・フォロワー</span></label>
+          <label class="check-item"><input type="checkbox"> <span>依頼主・クライアント（お仕事依頼）</span></label>
+          <label class="check-item"><input type="checkbox"> <span>共同制作メンバー（コラボ相手）</span></label>
+          <label class="check-item"><input type="checkbox"> <span>新しく知ってほしい人（新規）</span></label>
+          <label class="check-item"><input type="checkbox"> <span>企業・メディア（商業化希望）</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <label class="q-label">自分で内容を更新したいですか？（CMS確認）</label>
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="cms"> <span><strong>はい</strong> — ブログ・お知らせ・作品を自分で追加・編集したい</span></label>
+          <label class="radio-item"><input type="radio" name="cms"> <span><strong>いいえ</strong> — 更新はaiuegoに依頼すればOK（月額保守プランで対応）</span></label>
+          <label class="radio-item"><input type="radio" name="cms"> <span>わからない / どちらでもいい</span></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 03 デザイン・雰囲気 ===== -->
+    <div class="section-block">
+      <p class="section-title">03 — デザイン・雰囲気</p>
+
+      <div class="q-block">
+        <label class="q-label">希望するテイスト・雰囲気（複数選択OK）</label>
+        <div class="mood-group">
+          <span class="mood-item"><input type="checkbox" id="m1"><label for="m1">ダーク・不穏</label></span>
+          <span class="mood-item"><input type="checkbox" id="m2"><label for="m2">ホラー・グロテスク</label></span>
+          <span class="mood-item"><input type="checkbox" id="m3"><label for="m3">幻想・ファンタジー</label></span>
+          <span class="mood-item"><input type="checkbox" id="m4"><label for="m4">和風・武家</label></span>
+          <span class="mood-item"><input type="checkbox" id="m5"><label for="m5">モノクロ・ミニマル</label></span>
+          <span class="mood-item"><input type="checkbox" id="m6"><label for="m6">サイバー・近未来</label></span>
+          <span class="mood-item"><input type="checkbox" id="m7"><label for="m7">かわいい・ポップ</label></span>
+          <span class="mood-item"><input type="checkbox" id="m8"><label for="m8">おしゃれ・シック</label></span>
+          <span class="mood-item"><input type="checkbox" id="m9"><label for="m9">レトロ・ヴィンテージ</label></span>
+          <span class="mood-item"><input type="checkbox" id="m10"><label for="m10">シンプル・清潔感</label></span>
+          <span class="mood-item"><input type="checkbox" id="m11"><label for="m11">激しい・ノイジー</label></span>
+          <span class="mood-item"><input type="checkbox" id="m12"><label for="m12">神秘・宗教的</label></span>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <label class="q-label">明るさのイメージ</label>
+        <p class="q-hint">1（真っ暗）〜 5（明るい）</p>
+        <div class="scale-group">
+          <span class="scale-item"><input type="radio" name="brightness" value="1"> <span>1 暗</span></span>
+          <span class="scale-item"><input type="radio" name="brightness" value="2"> <span>2</span></span>
+          <span class="scale-item"><input type="radio" name="brightness" value="3"> <span>3 中間</span></span>
+          <span class="scale-item"><input type="radio" name="brightness" value="4"> <span>4</span></span>
+          <span class="scale-item"><input type="radio" name="brightness" value="5"> <span>5 明</span></span>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <label class="q-label">好きな色・使いたい色</label>
+        <p class="q-hint">「黒×金」「くすみ紫」「血のような赤」など自由に</p>
+        <input type="text" placeholder="例：深い紫と黒、アクセントに金">
+      </div>
+
+      <div class="q-block">
+        <label class="q-label">参考にしたいサイト・好きなサイトのURL</label>
+        <p class="q-hint">「こういう雰囲気が好き」というURLを貼ってください（0〜3件）</p>
+        <input type="url" placeholder="https://" style="margin-bottom:0.5rem">
+        <input type="url" placeholder="https://" style="margin-bottom:0.5rem">
+        <input type="url" placeholder="https://">
+      </div>
+
+      <div class="q-block">
+        <label class="q-label">「これだけは絶対やめてほしい」NGデザイン</label>
+        <p class="q-hint">色・フォント・レイアウト等、制作前に教えてください</p>
+        <textarea placeholder="例：白地に黒文字だけのシンプルすぎるのはNG。丸いフォントも避けたい"></textarea>
+      </div>
+    </div>
+
+    <!-- ===== 04 掲載コンテンツ ===== -->
+    <div class="section-block">
+      <p class="section-title">04 — 掲載したいコンテンツ</p>
+
+      <div class="q-block">
+        <label class="q-label">HPに掲載したいページ・セクション（複数選択OK）</label>
+        <div class="check-group">
+          <label class="check-item"><input type="checkbox"> <span>自己紹介 / プロフィール</span></label>
+          <label class="check-item"><input type="checkbox"> <span>作品ポートフォリオ（画像ギャラリー）</span></label>
+          <label class="check-item"><input type="checkbox"> <span>活動記録・お知らせ（ブログ的なもの）</span></label>
+          <label class="check-item"><input type="checkbox"> <span>依頼・受注ページ（金額・内容・条件等）</span></label>
+          <label class="check-item"><input type="checkbox"> <span>問い合わせフォーム</span></label>
+          <label class="check-item"><input type="checkbox"> <span>SNSリンク集</span></label>
+          <label class="check-item"><input type="checkbox"> <span>グッズ・販売ページへのリンク</span></label>
+          <label class="check-item"><input type="checkbox"> <span>メンバー紹介（サークルの場合）</span></label>
+          <label class="check-item"><input type="checkbox"> <span>世界観・設定紹介（作品世界の説明）</span></label>
+          <label class="check-item"><input type="checkbox"> <span>ギャラリー・過去作品アーカイブ</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <label class="q-label">外部サービスで連携したいもの（複数選択OK）</label>
+        <div class="check-group">
+          <label class="check-item"><input type="checkbox"> <span>X（Twitter）</span></label>
+          <label class="check-item"><input type="checkbox"> <span>Pixiv</span></label>
+          <label class="check-item"><input type="checkbox"> <span>YouTube / ニコニコ動画</span></label>
+          <label class="check-item"><input type="checkbox"> <span>Booth（同人・グッズ販売）</span></label>
+          <label class="check-item"><input type="checkbox"> <span>Creema / Minne</span></label>
+          <label class="check-item"><input type="checkbox"> <span>Skeb / FANBOX</span></label>
+          <label class="check-item"><input type="checkbox"> <span>Discord</span></label>
+          <label class="check-item"><input type="checkbox"> <span>特になし</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <label class="q-label">作品や素材の画像は用意できますか？</label>
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="images"> <span>はい、すでに用意できる画像がある</span></label>
+          <label class="radio-item"><input type="radio" name="images"> <span>一部は用意できるが、足りない部分は相談したい</span></label>
+          <label class="radio-item"><input type="radio" name="images"> <span>まだ用意できていない（制作中または未着手）</span></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 05 技術・機能 ===== -->
+    <div class="section-block">
+      <p class="section-title">05 — 技術・機能要件</p>
+
+      <div class="q-block">
+        <label class="q-label">問い合わせフォームは必要ですか？</label>
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="form"> <span>はい（依頼・コラボ申請を受け取りたい）</span></label>
+          <label class="radio-item"><input type="radio" name="form"> <span>いいえ（Xのメンション・DMに誘導でOK）</span></label>
+          <label class="radio-item"><input type="radio" name="form"> <span>迷っている</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <label class="q-label">サイトを日本語以外にも対応させますか？</label>
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="lang"> <span>日本語のみでよい</span></label>
+          <label class="radio-item"><input type="radio" name="lang"> <span>英語も入れたい（海外フォロワー・依頼者向け）</span></label>
+          <label class="radio-item"><input type="radio" name="lang"> <span>どちらでもよい</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <label class="q-label">パスワード制限など、一部コンテンツを非公開にしたいですか？</label>
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="private"> <span>はい（会員・特定ユーザー向けコンテンツがある）</span></label>
+          <label class="radio-item"><input type="radio" name="private"> <span>いいえ、全公開でよい</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <label class="q-label">アニメーション・動的な演出は？</label>
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="anim"> <span>積極的に入れてほしい（動くとテンションが上がる）</span></label>
+          <label class="radio-item"><input type="radio" name="anim"> <span>控えめにしてほしい（シンプルな方が好き）</span></label>
+          <label class="radio-item"><input type="radio" name="anim"> <span>おまかせ</span></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 06 予算・スケジュール ===== -->
+    <div class="section-block">
+      <p class="section-title">06 — 予算・スケジュール</p>
+
+      <div class="grid-2">
+        <div class="q-block">
+          <label class="q-label">ご予算感</label>
+          <select>
+            <option value="">選択してください</option>
+            <option>¥17,000〜（スタンダード）</option>
+            <option>¥27,000〜（CMS込み）</option>
+            <option>¥30,000以上でも相談したい</option>
+            <option>まだ決まっていない</option>
+          </select>
+        </div>
+        <div class="q-block">
+          <label class="q-label">希望の公開時期</label>
+          <select>
+            <option value="">選択してください</option>
+            <option>急いでいる（1週間以内）</option>
+            <option>2〜3週間以内</option>
+            <option>1ヶ月以内</option>
+            <option>まだ急いでいない</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <label class="q-label">公開後の保守・更新はどうしますか？</label>
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="maintenance"> <span>自分で更新できるCMS付きがいい</span></label>
+          <label class="radio-item"><input type="radio" name="maintenance"> <span>月額保守プラン（¥1,500〜）でaiuegoに任せたい</span></label>
+          <label class="radio-item"><input type="radio" name="maintenance"> <span>頻繁な更新はしない（公開したら当面そのまま）</span></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 07 自由記述 ===== -->
+    <div class="section-block">
+      <p class="section-title">07 — 補足・その他</p>
+
+      <div class="q-block">
+        <label class="q-label">伝えておきたいこと・質問・要望など</label>
+        <p class="q-hint">「世界観はこんな感じ」「今は●●というサイトを参考にしています」「予算は相談したい」等、何でもどうぞ</p>
+        <textarea rows="5" placeholder="自由にお書きください🌿"></textarea>
+      </div>
+
+      <div class="q-block">
+        <label class="q-label">aiuegoを知ったきっかけ</label>
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="source"> <span>X（Twitter）</span></label>
+          <label class="radio-item"><input type="radio" name="source"> <span>Coconala</span></label>
+          <label class="radio-item"><input type="radio" name="source"> <span>Instagram</span></label>
+          <label class="radio-item"><input type="radio" name="source"> <span>知人の紹介</span></label>
+          <label class="radio-item"><input type="radio" name="source"> <span>その他：<input type="text" class="other-input" placeholder="ご自由に"></span></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 送信 -->
+    <div class="submit-area">
+      <button class="submit-btn" type="button" onclick="copyToClipboard()">
+        📋 回答内容をコピーしてLINEで送る
+      </button>
+    </div>
+    <p class="note-bottom">
+      このシートを記入後、<strong>LINEのトーク画面に貼り付けて送ってください。</strong><br>
+      LINEで直接やり取りも大歓迎です🌿<br>
+      <a href="https://lin.ee/pUjT9Iq" target="_blank" style="color:var(--accent-d);">▶ aiuego LINEを開く</a>
+    </p>
+
+  </div><!-- /container -->
+
+  <script>
+    function copyToClipboard() {
+      const lines = [];
+      lines.push('【aiuego クリエイター向けヒアリングシート】');
+      lines.push('');
+
+      // Collect all inputs
+      document.querySelectorAll('.section-block').forEach(block => {
+        const title = block.querySelector('.section-title');
+        if (title) lines.push('■ ' + title.textContent);
+
+        block.querySelectorAll('.q-block').forEach(q => {
+          const label = q.querySelector('.q-label');
+          if (!label) return;
+          const labelText = label.textContent.replace('必須', '').trim();
+          lines.push('');
+          lines.push('▷ ' + labelText);
+
+          // Text inputs
+          q.querySelectorAll('input[type="text"], input[type="url"], input[type="email"], textarea, select')
+            .forEach(el => {
+              if (el.closest('.check-item') || el.closest('.radio-item')) return;
+              if (el.tagName === 'SELECT') {
+                const selected = el.options[el.selectedIndex];
+                lines.push('→ ' + (selected ? selected.text : '（未選択）'));
+              } else {
+                lines.push('→ ' + (el.value.trim() || '（未記入）'));
+              }
+            });
+
+          // Checkboxes
+          const checked = [];
+          q.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
+            const span = cb.parentElement.querySelector('span');
+            if (span) checked.push(span.textContent.trim().replace(/\s+/g,' ').substring(0,40));
+          });
+          if (checked.length) lines.push('→ ' + checked.join(' / '));
+
+          // Radios
+          const radio = q.querySelector('input[type="radio"]:checked');
+          if (radio) {
+            const span = radio.parentElement.querySelector('span');
+            if (span) lines.push('→ ' + span.textContent.trim().replace(/\s+/g,' ').substring(0,60));
+          }
+
+          // Mood tags
+          const moods = [];
+          q.querySelectorAll('.mood-item input:checked').forEach(cb => {
+            const lbl = q.querySelector(`label[for="${cb.id}"]`);
+            if (lbl) moods.push(lbl.textContent.trim());
+          });
+          if (moods.length) lines.push('→ ' + moods.join(' / '));
+        });
+        lines.push('');
+      });
+
+      const text = lines.join('\n');
+      navigator.clipboard.writeText(text).then(() => {
+        alert('コピーしました！LINEのトーク画面に貼り付けて送ってください🌿\n\n（https://lin.ee/pUjT9Iq）');
+      }).catch(() => {
+        prompt('以下をコピーしてLINEに貼り付けてください：', text);
+      });
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VOID HOLLOW</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Cinzel:wght@400;600;700&family=Noto+Serif+JP:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    /* ===== RESET ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    /* ===== DESIGN TOKENS ===== */
+    :root {
+      --bg:        #070509;
+      --bg-2:      #0e0b13;
+      --bg-3:      #160f1e;
+      --bg-card:   #1c1228;
+      --crimson:   #6b1212;
+      --crimson-l: #9e2020;
+      --crimson-g: rgba(107,18,18,0.35);
+      --gold:      #7a5c1a;
+      --gold-l:    #b89050;
+      --gold-g:    rgba(122,92,26,0.3);
+      --text:      #ccc0b0;
+      --text-2:    #8a7f72;
+      --text-3:    #504840;
+      --border:    rgba(200,192,176,0.09);
+      --border-a:  rgba(122,92,26,0.25);
+    }
+
+    /* ===== BASE ===== */
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Noto Serif JP', serif;
+      font-weight: 300;
+      line-height: 1.9;
+      overflow-x: hidden;
+    }
+
+    /* Noise grain overlay */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: 0.028;
+      pointer-events: none;
+      z-index: 9998;
+    }
+
+    /* ===== NAVIGATION ===== */
+    #nav {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      z-index: 500;
+      padding: 1.4rem 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.4s, border 0.4s;
+    }
+    #nav.scrolled {
+      background: rgba(7,5,9,0.95);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(8px);
+    }
+    .nav-logo {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--gold-l);
+      text-decoration: none;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+    }
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 2.5rem;
+    }
+    .nav-links a {
+      color: var(--text-2);
+      text-decoration: none;
+      font-family: 'Cinzel', serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    /* ===== HERO ===== */
+    #hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 8rem 2rem 5rem;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse 70% 50% at 50% 45%, rgba(80,10,10,0.18) 0%, transparent 65%),
+        radial-gradient(ellipse 100% 80% at 50% 90%, rgba(7,5,9,1) 50%, transparent 100%),
+        var(--bg);
+    }
+
+    /* Thin diagonal lines texture */
+    #hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 80px,
+        rgba(200,192,176,0.012) 80px,
+        rgba(200,192,176,0.012) 81px
+      );
+      pointer-events: none;
+    }
+
+    /* Fog gradient bottom */
+    #hero .fog {
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 100%;
+      height: 45%;
+      background: linear-gradient(to top, var(--bg) 0%, rgba(7,5,9,0.6) 50%, transparent 100%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      font-family: 'Cinzel', serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.5em;
+      color: var(--gold);
+      text-transform: uppercase;
+      opacity: 0.8;
+      margin-bottom: 2.5rem;
+      position: relative;
+    }
+    .hero-eyebrow::before,
+    .hero-eyebrow::after {
+      content: '✦';
+      margin: 0 1.2rem;
+      font-size: 0.5rem;
+      vertical-align: middle;
+    }
+
+    .hero-title {
+      font-family: 'IM Fell English', 'Noto Serif JP', serif;
+      font-size: clamp(3.5rem, 9vw, 8rem);
+      font-weight: 400;
+      line-height: 1.0;
+      color: var(--text);
+      letter-spacing: 0.05em;
+      animation: title-flicker 12s infinite;
+      position: relative;
+    }
+    @keyframes title-flicker {
+      0%,87%,89%,92%,100% { opacity:1; }
+      88% { opacity:0.82; }
+      90% { opacity:0.95; }
+      91% { opacity:0.85; }
+    }
+
+    .hero-title-ja {
+      font-family: 'Noto Serif JP', serif;
+      font-weight: 300;
+      font-size: clamp(1rem, 2.5vw, 1.6rem);
+      color: var(--text-2);
+      letter-spacing: 0.5em;
+      margin-top: 0.8rem;
+    }
+
+    .hero-rule {
+      width: 100px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--crimson), transparent);
+      margin: 2.8rem auto;
+    }
+
+    .hero-catchcopy {
+      font-size: clamp(0.9rem, 1.6vw, 1.1rem);
+      color: var(--text-2);
+      letter-spacing: 0.12em;
+      line-height: 2;
+      max-width: 540px;
+    }
+    .hero-sub {
+      font-size: 0.82rem;
+      color: var(--text-3);
+      letter-spacing: 0.08em;
+      margin-top: 0.6rem;
+    }
+
+    .hero-cta {
+      display: inline-block;
+      margin-top: 3.5rem;
+      padding: 0.85rem 2.8rem;
+      border: 1px solid var(--crimson-l);
+      color: var(--text);
+      text-decoration: none;
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      position: relative;
+      overflow: hidden;
+      transition: color 0.4s;
+    }
+    .hero-cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--crimson);
+      transform: translateX(-100%);
+      transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+    }
+    .hero-cta:hover::before { transform: translateX(0); }
+    .hero-cta span { position: relative; z-index: 1; }
+
+    .scroll-down {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+      color: var(--text-3);
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      animation: scroll-pulse 2.5s ease-in-out infinite;
+    }
+    .scroll-down::after {
+      content: '';
+      width: 1px;
+      height: 48px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+    }
+    @keyframes scroll-pulse {
+      0%,100% { opacity: 0.4; transform: translateX(-50%) translateY(0); }
+      50%      { opacity: 0.7; transform: translateX(-50%) translateY(6px); }
+    }
+
+    /* ===== SECTION COMMON ===== */
+    .section { padding: 7rem 2rem; }
+    .container { max-width: 1060px; margin: 0 auto; }
+
+    .section-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--gold-l);
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 1.4rem;
+      margin-bottom: 3.5rem;
+    }
+    .section-label::before,
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--border-a), transparent);
+    }
+
+    /* ===== ABOUT ===== */
+    #about { background: var(--bg); }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+    .about-sigil {
+      position: relative;
+      width: 160px;
+      height: 160px;
+      flex-shrink: 0;
+    }
+    .about-sigil svg { width: 100%; height: 100%; opacity: 0.18; }
+    .about-body p {
+      color: var(--text-2);
+      font-size: 0.95rem;
+      margin-bottom: 1.4rem;
+      line-height: 2.1;
+    }
+    .about-body p:last-child { margin-bottom: 0; }
+
+    /* ===== NEWS ===== */
+    #news {
+      background: var(--bg-2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .news-list { list-style: none; }
+    .news-item {
+      display: grid;
+      grid-template-columns: 130px 90px 1fr;
+      gap: 2rem;
+      align-items: baseline;
+      padding: 1.3rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .news-item:first-child { border-top: 1px solid var(--border); }
+    .news-date {
+      font-family: 'Cinzel', serif;
+      font-size: 0.72rem;
+      color: var(--gold);
+      letter-spacing: 0.08em;
+    }
+    .news-cat {
+      display: inline-block;
+      border: 1px solid var(--crimson);
+      color: var(--crimson-l);
+      font-size: 0.68rem;
+      padding: 0.18rem 0.7rem;
+      text-align: center;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+    .news-title {
+      font-size: 0.9rem;
+      color: var(--text);
+      text-decoration: none;
+      transition: color 0.25s;
+    }
+    .news-title:hover { color: var(--gold-l); }
+
+    /* ===== WORKS ===== */
+    #works { background: var(--bg); }
+    .works-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 1.8rem;
+    }
+    .work-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      transition: border-color 0.4s;
+    }
+    .work-card:hover { border-color: var(--border-a); }
+    .work-card-img {
+      overflow: hidden;
+      aspect-ratio: 3/2;
+    }
+    .work-card-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: grayscale(40%) brightness(0.65) sepia(10%);
+      transition: filter 0.6s ease, transform 0.6s ease;
+    }
+    .work-card:hover .work-card-img img {
+      filter: grayscale(0%) brightness(0.8) sepia(0%);
+      transform: scale(1.04);
+    }
+    .work-info { padding: 1.3rem 1.6rem 1.6rem; }
+    .work-cat {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+    .work-title {
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--text);
+      margin-top: 0.35rem;
+      line-height: 1.5;
+    }
+    .work-desc {
+      font-size: 0.8rem;
+      color: var(--text-2);
+      margin-top: 0.5rem;
+      line-height: 1.7;
+    }
+
+    /* ===== CONTACT ===== */
+    #contact {
+      background: var(--bg-3);
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+    .contact-body {
+      font-size: 0.92rem;
+      color: var(--text-2);
+      line-height: 2.2;
+      max-width: 480px;
+      margin: 0 auto 2.8rem;
+    }
+    .btn-contact {
+      display: inline-block;
+      padding: 1rem 3.2rem;
+      background: var(--crimson);
+      color: var(--text);
+      text-decoration: none;
+      font-family: 'Cinzel', serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      transition: background 0.3s;
+    }
+    .btn-contact:hover { background: var(--crimson-l); }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 2rem;
+      text-align: center;
+    }
+    .footer-logo {
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      color: var(--gold-l);
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    .footer-copy {
+      font-size: 0.72rem;
+      color: var(--text-3);
+      letter-spacing: 0.08em;
+    }
+    .footer-credit {
+      margin-top: 0.6rem;
+      font-size: 0.65rem;
+      color: var(--text-3);
+      opacity: 0.45;
+    }
+    .footer-credit a { color: inherit; text-decoration: none; }
+    .footer-credit a:hover { opacity: 1; }
+
+    /* ===== FADE-IN ===== */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    .fade-in:nth-child(2) { transition-delay: 0.1s; }
+    .fade-in:nth-child(3) { transition-delay: 0.2s; }
+
+    /* ===== ADMIN LINK (almost invisible) ===== */
+    .admin-link {
+      position: fixed;
+      bottom: 0.8rem;
+      right: 1rem;
+      color: var(--text-3);
+      text-decoration: none;
+      font-size: 0.58rem;
+      opacity: 0.04;
+      transition: opacity 0.4s;
+      z-index: 600;
+    }
+    .admin-link:hover { opacity: 0.35; }
+
+    /* ===== MOBILE ===== */
+    @media (max-width: 768px) {
+      #nav { padding: 1.2rem 1.5rem; }
+      .nav-links { display: none; }
+      .section { padding: 5rem 1.5rem; }
+      .about-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      .about-sigil { width: 100px; height: 100px; margin: 0 auto; }
+      .news-item {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto;
+        gap: 0.5rem 1rem;
+      }
+      .news-title { grid-column: 1 / -1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="nav">
+    <a href="#" class="nav-logo" id="nav-logo">VOID HOLLOW</a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#news">News</a></li>
+      <li><a href="#works">Works</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="fog"></div>
+    <p class="hero-eyebrow" id="hero-eyebrow">Darkness Calls</p>
+    <h1 class="hero-title" id="hero-title">VOID HOLLOW</h1>
+    <p class="hero-title-ja" id="hero-title-ja">虚ろの廊下</p>
+    <div class="hero-rule"></div>
+    <p class="hero-catchcopy" id="hero-catchcopy">見てはいけない。でも、目が離せない。</p>
+    <p class="hero-sub" id="hero-sub">闇の向こうに、あなたへの物語が待っている。</p>
+    <a href="#about" class="hero-cta" id="hero-cta"><span>深淵へ踏み込む</span></a>
+    <div class="scroll-down">scroll</div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="section">
+    <div class="container fade-in">
+      <p class="section-label">About</p>
+      <div class="about-grid">
+        <div class="about-sigil" aria-hidden="true">
+          <svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Decorative sigil -->
+            <circle cx="80" cy="80" r="72" stroke="#b89050" stroke-width="0.8"/>
+            <circle cx="80" cy="80" r="56" stroke="#b89050" stroke-width="0.4"/>
+            <circle cx="80" cy="80" r="3" fill="#b89050"/>
+            <line x1="80" y1="8" x2="80" y2="152" stroke="#b89050" stroke-width="0.5"/>
+            <line x1="8" y1="80" x2="152" y2="80" stroke="#b89050" stroke-width="0.5"/>
+            <line x1="28.7" y1="28.7" x2="131.3" y2="131.3" stroke="#b89050" stroke-width="0.4"/>
+            <line x1="131.3" y1="28.7" x2="28.7" y2="131.3" stroke="#b89050" stroke-width="0.4"/>
+            <polygon points="80,20 93,60 136,60 103,85 116,125 80,100 44,125 57,85 24,60 67,60"
+              stroke="#9e2020" stroke-width="0.6" fill="none"/>
+          </svg>
+        </div>
+        <div class="about-body" id="about-body">
+          <p>私たちは闇と美の境界を探求する創作集団です。</p>
+          <p>小説、イラスト、音楽を通じて、あなたを未知の世界へ誘います。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEWS -->
+  <section id="news" class="section">
+    <div class="container fade-in">
+      <p class="section-label">News</p>
+      <ul class="news-list" id="news-list">
+        <!-- CMS populated -->
+      </ul>
+    </div>
+  </section>
+
+  <!-- WORKS -->
+  <section id="works" class="section">
+    <div class="container fade-in">
+      <p class="section-label">Works</p>
+      <div class="works-grid" id="works-grid">
+        <!-- CMS populated -->
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="section">
+    <div class="container fade-in">
+      <p class="section-label">Contact</p>
+      <p class="contact-body" id="contact-body">
+        作品への感想、制作依頼、参加希望はXのDMよりお気軽にどうぞ。
+      </p>
+      <a href="#" class="btn-contact" id="contact-btn">X (Twitter) で連絡する</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p class="footer-logo" id="footer-logo">VOID HOLLOW</p>
+    <p class="footer-copy" id="footer-copy">© 2026 VOID HOLLOW All rights reserved.</p>
+    <p class="footer-credit">Designed by <a href="https://lin.ee/pUjT9Iq" target="_blank">aiuego</a></p>
+  </footer>
+
+  <a href="./admin/" class="admin-link">admin</a>
+
+  <script>
+    // ===== LOAD CONTENT FROM content.json =====
+    fetch('./content.json')
+      .then(r => {
+        if (!r.ok) throw new Error('content.json not found');
+        return r.json();
+      })
+      .then(d => {
+        // Site
+        document.title = d.site.title;
+        document.getElementById('nav-logo').textContent = d.site.title;
+        document.getElementById('footer-logo').textContent = d.site.title;
+        document.getElementById('footer-copy').textContent = d.site.copyright;
+
+        // Hero
+        document.getElementById('hero-eyebrow').innerHTML =
+          `✦ ${d.site.subtitle} ✦`;
+        document.getElementById('hero-title').textContent = d.site.title;
+        document.getElementById('hero-title-ja').textContent = d.site.title_ja;
+        document.getElementById('hero-catchcopy').textContent = d.hero.catchcopy;
+        document.getElementById('hero-sub').textContent = d.hero.sub_catchcopy;
+        const heroCta = document.getElementById('hero-cta');
+        heroCta.querySelector('span').textContent = d.hero.button_text;
+        heroCta.href = d.hero.button_link;
+
+        // About
+        const aboutBody = document.getElementById('about-body');
+        aboutBody.innerHTML = d.about.body
+          .split('\n')
+          .filter(l => l.trim())
+          .map(l => `<p>${l}</p>`)
+          .join('');
+
+        // News
+        document.getElementById('news-list').innerHTML = d.news.map(n => `
+          <li class="news-item">
+            <span class="news-date">${n.date}</span>
+            <span class="news-cat">${n.category}</span>
+            <a href="${n.link}" class="news-title">${n.title}</a>
+          </li>`).join('');
+
+        // Works
+        document.getElementById('works-grid').innerHTML = d.works.map(w => `
+          <div class="work-card">
+            <div class="work-card-img">
+              <img src="${w.image}" alt="${w.title}" loading="lazy">
+            </div>
+            <div class="work-info">
+              <p class="work-cat">${w.category}</p>
+              <h3 class="work-title">${w.title}</h3>
+              <p class="work-desc">${w.description}</p>
+            </div>
+          </div>`).join('');
+
+        // Contact
+        document.getElementById('contact-body').innerHTML =
+          d.contact.body.split('\n').filter(l=>l.trim()).map(l=>`<span>${l}</span><br>`).join('');
+        const btn = document.getElementById('contact-btn');
+        btn.textContent = d.contact.button_text;
+        btn.href = d.contact.button_link;
+      })
+      .catch(() => {
+        // Fallback: keep HTML defaults, do nothing
+      });
+
+    // ===== NAV SCROLL =====
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    });
+
+    // ===== FADE IN ON SCROLL =====
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.fade-in').forEach(el => io.observe(el));
+  </script>
+</body>
+</html>
