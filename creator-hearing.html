@@ -217,7 +217,7 @@
     <p>aiuego HP制作サービス ／ ご記入いただいた内容をもとにご提案いたします</p>
   </div>
 
-  <div class="container">
+  <div class="container" id="hearingForm">
 
     <div class="intro-note">
       このシートはイラストレーター・創作サークル・VTuber・作家・ゲーム制作者など<strong>クリエイター・創作活動をされている方向け</strong>のヒアリングシートです。<br>
@@ -230,7 +230,7 @@
 
       <div class="q-block">
         <label class="q-label">活動名・サークル名・ペンネーム<span class="req">必須</span></label>
-        <input type="text" placeholder="例：ハーハーブ / VOID HOLLOW">
+        <input type="text" id="activity-name" placeholder="例：aiuego / VOID HOLLOW">
       </div>
 
       <div class="q-block">
@@ -240,7 +240,7 @@
 
       <div class="q-block">
         <label class="q-label">メールアドレス（ご連絡用）<span class="req">必須</span></label>
-        <input type="email" placeholder="example@email.com">
+        <input type="email" id="contact-email" placeholder="example@email.com">
       </div>
 
       <div class="q-block">
@@ -492,94 +492,217 @@
         <textarea rows="5" placeholder="自由にお書きください🌿"></textarea>
       </div>
 
-      <div class="q-block">
-        <label class="q-label">aiuegoを知ったきっかけ</label>
-        <div class="radio-group">
-          <label class="radio-item"><input type="radio" name="source"> <span>X（Twitter）</span></label>
-          <label class="radio-item"><input type="radio" name="source"> <span>Coconala</span></label>
-          <label class="radio-item"><input type="radio" name="source"> <span>Instagram</span></label>
-          <label class="radio-item"><input type="radio" name="source"> <span>知人の紹介</span></label>
-          <label class="radio-item"><input type="radio" name="source"> <span>その他：<input type="text" class="other-input" placeholder="ご自由に"></span></label>
-        </div>
-      </div>
     </div>
 
     <!-- 送信 -->
     <div class="submit-area">
-      <button class="submit-btn" type="button" onclick="copyToClipboard()">
-        📋 回答内容をコピーしてLINEで送る
+      <button class="submit-btn" type="button" id="btnSubmit" onclick="showConfirm()">
+        内容を確認して送信する →
       </button>
     </div>
     <p class="note-bottom">
-      このシートを記入後、<strong>LINEのトーク画面に貼り付けて送ってください。</strong><br>
-      LINEで直接やり取りも大歓迎です🌿<br>
+      送信後、aiuego から <strong>24時間以内</strong> にメールでご連絡します。<br>
+      LINEでのやり取りも大歓迎です🌿<br>
       <a href="https://lin.ee/pUjT9Iq" target="_blank" style="color:var(--accent-d);">▶ aiuego LINEを開く</a>
     </p>
 
   </div><!-- /container -->
 
-  <script>
-    function copyToClipboard() {
-      const lines = [];
-      lines.push('【aiuego クリエイター向けヒアリングシート】');
-      lines.push('');
+  <!-- ===== 確認画面 ===== -->
+  <div id="confirmScreen" style="display:none; padding: 0 1rem 4rem;">
+    <div class="header">
+      <h1>送信内容の確認</h1>
+      <p>以下の内容で送信してよろしいですか？</p>
+    </div>
+    <div class="container">
+      <div id="confirmTable" class="section-block" style="font-size:0.85rem; line-height:1.9;"></div>
+      <div style="display:flex; gap:1rem; justify-content:center; margin-top:1.5rem; flex-wrap:wrap;">
+        <button class="submit-btn" style="background:#aaa; padding:0.8rem 2rem;" onclick="backToForm()">← 修正する</button>
+        <button class="submit-btn" id="btnConfirm" style="padding:0.8rem 2.5rem;" onclick="submitToGAS()">この内容で送信する ✓</button>
+      </div>
+    </div>
+  </div>
 
-      // Collect all inputs
-      document.querySelectorAll('.section-block').forEach(block => {
-        const title = block.querySelector('.section-title');
-        if (title) lines.push('■ ' + title.textContent);
+  <!-- ===== 完了画面 ===== -->
+  <div id="successScreen" style="display:none; padding: 4rem 1rem;">
+    <div class="container" style="text-align:center;">
+      <div style="
+        background:#fff;
+        border:1px solid var(--border);
+        border-radius:2px;
+        padding:3rem 2rem;
+        max-width:500px;
+        margin:0 auto;
+      ">
+        <div style="font-size:2.4rem; margin-bottom:1.2rem;">✉️</div>
+        <h2 style="font-size:1.1rem; font-weight:500; margin-bottom:0.8rem; color:var(--text);">
+          送信が完了しました
+        </h2>
+        <p style="font-size:0.88rem; color:var(--text-2); line-height:1.9; margin-bottom:1.8rem;">
+          ご記入ありがとうございます。<br>
+          24時間以内にメールにてご連絡します。<br>
+          お急ぎの場合はLINEからどうぞ🌿
+        </p>
+        <a href="https://lin.ee/pUjT9Iq" target="_blank"
+           style="display:inline-block; background:var(--accent); color:#fff; padding:0.8rem 2rem; text-decoration:none; font-size:0.88rem;">
+          LINEでaiuegoに連絡する
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbzRSkg2Z6IAxaqtqiSRrMMGs2DHJid87m_38z4Lapz3AxC6jTX0zH-UwU-UGTKS3_Y1kA/exec';
+
+    /* ========== フォームデータ収集 ========== */
+    function collectData() {
+      const rows = [];
+
+      document.querySelectorAll('#hearingForm .section-block').forEach(block => {
+        const sectionTitle = block.querySelector('.section-title');
+        if (sectionTitle) rows.push({ label: '── ' + sectionTitle.textContent + ' ──', value: '' });
 
         block.querySelectorAll('.q-block').forEach(q => {
           const label = q.querySelector('.q-label');
           if (!label) return;
           const labelText = label.textContent.replace('必須', '').trim();
-          lines.push('');
-          lines.push('▷ ' + labelText);
+          const values = [];
 
-          // Text inputs
-          q.querySelectorAll('input[type="text"], input[type="url"], input[type="email"], textarea, select')
+          // テキスト系
+          q.querySelectorAll('input[type="text"]:not(.other-input), input[type="url"], input[type="email"], textarea, select')
             .forEach(el => {
-              if (el.closest('.check-item') || el.closest('.radio-item')) return;
               if (el.tagName === 'SELECT') {
-                const selected = el.options[el.selectedIndex];
-                lines.push('→ ' + (selected ? selected.text : '（未選択）'));
-              } else {
-                lines.push('→ ' + (el.value.trim() || '（未記入）'));
+                const sel = el.options[el.selectedIndex];
+                if (sel && sel.value) values.push(sel.text);
+              } else if (el.value.trim()) {
+                values.push(el.value.trim());
               }
             });
 
-          // Checkboxes
+          // チェックボックス（他入力込み）
           const checked = [];
           q.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
             const span = cb.parentElement.querySelector('span');
-            if (span) checked.push(span.textContent.trim().replace(/\s+/g,' ').substring(0,40));
+            if (!span) return;
+            let txt = span.textContent.trim().replace(/\s+/g, ' ');
+            const oi = span.querySelector('.other-input');
+            if (oi && oi.value.trim()) txt = oi.value.trim();
+            checked.push(txt.substring(0, 60));
           });
-          if (checked.length) lines.push('→ ' + checked.join(' / '));
+          if (checked.length) values.push(checked.join(' / '));
 
-          // Radios
+          // ラジオ
           const radio = q.querySelector('input[type="radio"]:checked');
           if (radio) {
             const span = radio.parentElement.querySelector('span');
-            if (span) lines.push('→ ' + span.textContent.trim().replace(/\s+/g,' ').substring(0,60));
+            if (span) {
+              let txt = span.textContent.trim().replace(/\s+/g, ' ').substring(0, 80);
+              const oi = span.querySelector('.other-input');
+              if (oi && oi.value.trim()) txt = oi.value.trim();
+              values.push(txt);
+            }
           }
 
-          // Mood tags
+          // ムードタグ
           const moods = [];
           q.querySelectorAll('.mood-item input:checked').forEach(cb => {
             const lbl = q.querySelector(`label[for="${cb.id}"]`);
             if (lbl) moods.push(lbl.textContent.trim());
           });
-          if (moods.length) lines.push('→ ' + moods.join(' / '));
+          if (moods.length) values.push(moods.join(' / '));
+
+          rows.push({ label: labelText, value: values.join(' ／ ') || '（未記入）' });
         });
-        lines.push('');
       });
 
-      const text = lines.join('\n');
-      navigator.clipboard.writeText(text).then(() => {
-        alert('コピーしました！LINEのトーク画面に貼り付けて送ってください🌿\n\n（https://lin.ee/pUjT9Iq）');
-      }).catch(() => {
-        prompt('以下をコピーしてLINEに貼り付けてください：', text);
+      const activityName = (document.getElementById('activity-name').value.trim()) || '（未記入）';
+      const contactEmail = (document.getElementById('contact-email').value.trim()) || '';
+      const fullText = rows.map(r => r.label ? (r.value ? r.label + '\n' + r.value : r.label) : '').join('\n');
+
+      return {
+        business_name: activityName,
+        contact: contactEmail,
+        business_desc: '【クリエイター・配信者向けシート】',
+        message: fullText,
+        type: 'creator',
+        _hp: ''
+      };
+    }
+
+    /* ========== 確認画面 ========== */
+    function showConfirm() {
+      const activityName = document.getElementById('activity-name').value.trim();
+      const contactEmail = document.getElementById('contact-email').value.trim();
+
+      if (!activityName) {
+        alert('活動名・サークル名・ペンネームは必須です。');
+        document.getElementById('activity-name').focus();
+        return;
+      }
+      if (!contactEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail)) {
+        alert('メールアドレスを正しく入力してください。');
+        document.getElementById('contact-email').focus();
+        return;
+      }
+
+      const data = collectData();
+      let html = '<table style="width:100%;border-collapse:collapse;font-size:0.85rem;">';
+      data.message.split('\n').forEach(line => {
+        if (line.startsWith('──')) {
+          html += `<tr><td colspan="2" style="padding:0.8rem 0.5rem 0.3rem;font-weight:500;color:var(--accent-d);font-size:0.78rem;letter-spacing:0.1em;">${line}</td></tr>`;
+        } else if (line) {
+          html += `<tr><td style="padding:0.3rem 0.5rem;color:var(--text-2);width:180px;vertical-align:top;">${line.split('\n')[0]}</td></tr>`;
+        }
       });
+
+      // シンプルに全行表示
+      html = '<div style="font-size:0.84rem;line-height:2;white-space:pre-wrap;color:var(--text-2);">'
+           + escapeHtml(data.message)
+           + '</div>';
+
+      document.getElementById('confirmTable').innerHTML = html;
+      document.getElementById('hearingForm').style.display = 'none';
+      document.querySelector('.intro-note').style.display = 'none';
+      document.getElementById('confirmScreen').style.display = 'block';
+      window.scrollTo(0, 0);
+    }
+
+    function backToForm() {
+      document.getElementById('confirmScreen').style.display = 'none';
+      document.getElementById('hearingForm').style.display = 'block';
+      document.querySelector('.intro-note').style.display = 'block';
+      window.scrollTo(0, 0);
+    }
+
+    /* ========== GAS送信 ========== */
+    async function submitToGAS() {
+      const btn = document.getElementById('btnConfirm');
+      btn.disabled = true;
+      btn.textContent = '⏳ 送信中...';
+
+      try {
+        const data = collectData();
+        await fetch(GAS_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify(data)
+        });
+        document.getElementById('confirmScreen').style.display = 'none';
+        document.getElementById('successScreen').style.display = 'block';
+        window.scrollTo(0, 0);
+      } catch (err) {
+        alert('送信中にエラーが発生しました。時間をおいて再度お試しいただくか、LINEからご連絡ください。');
+        btn.disabled = false;
+        btn.textContent = 'この内容で送信する ✓';
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
     }
   </script>
 
